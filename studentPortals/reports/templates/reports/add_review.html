@@ -1,0 +1,79 @@
+{% extends "reports/base.html" %}
+{% block content %}
+
+<div style="max-width:700px; margin:auto; padding:20px; background:#f9f9f9; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+    <h2 style="color:#343a40; margin-bottom:20px;">Submit or Edit a Review</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Selected Course -->
+        <div style="margin-bottom:15px;">
+            <label style="font-weight:bold;">Course:</label>
+            <p style="font-weight:bold; color:#007bff; margin:5px 0;">{{ selected_course.name }}</p>
+            <input type="hidden" name="course_id" value="{{ selected_course.id }}">
+        </div>
+
+        <!-- Rating -->
+        <div style="margin-bottom:15px;">
+            <label style="font-weight:bold;">Rating (1-5):</label>
+            <select name="rating" required style="padding:5px 10px; border-radius:5px; border:1px solid #ccc;">
+                {% for i in "12345" %}
+                    <option value="{{ i }}">{{ i }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Comment -->
+        <div style="margin-bottom:20px;">
+            <label style="font-weight:bold;">Comment:</label><br>
+            <textarea name="comment" rows="5" cols="50" placeholder="Write your review..." required
+                      style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc; resize:vertical;"></textarea>
+        </div>
+
+        <!-- Buttons -->
+        <div style="margin-bottom:20px;">
+            <button type="submit" 
+                    style="background:#28a745; color:white; padding:10px 16px; border:none; border-radius:5px; cursor:pointer; margin-right:10px;">
+                Submit Review
+            </button>
+
+            <a href="{% url 'student_detail' student.id %}" 
+               style="background:#6c757d; color:white; padding:10px 16px; border-radius:5px; text-decoration:none;">
+               ← Back to Dashboard
+            </a>
+        </div>
+    </form>
+
+    <hr style="margin:30px 0; border-color:#ddd;">
+
+    <!-- Existing Reviews -->
+    <h3 style="color:#343a40; margin-bottom:15px;">Your Existing Reviews</h3>
+    {% if reviews %}
+    <ul style="list-style:none; padding-left:0;">
+        {% for review in reviews %}
+        <li style="margin-bottom:15px; padding:10px; background:#adc1c1; border-radius:5px; box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+            <strong>{{ review.course.name }}</strong> — Rated {{ review.rating }}/5  
+            <br>"{{ review.comment }}"
+            <br>
+            <a href="#" onclick="editReview({{ review.course.id }}, {{ review.rating }}, '{{ review.comment|escapejs }}')"
+               style="color:white; background:#3153a0; padding:5px 10px; border-radius:5px; text-decoration:none; display:inline-block; margin-top:5px;">
+               Edit Review
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p style="color:#6c757d;">You haven’t submitted any reviews yet.</p>
+    {% endif %}
+</div>
+
+<script>
+function editReview(courseId, rating, comment) {
+    document.querySelector('input[name="course_id"]').value = courseId;
+    document.querySelector('select[name="rating"]').value = rating;
+    document.querySelector('textarea[name="comment"]').value = comment;
+}
+</script>
+
+{% endblock %}

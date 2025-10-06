@@ -1,0 +1,49 @@
+{% extends "reports/base.html" %}
+{% block content %}
+
+<h2>Students Enrolled in {{ course.name }}</h2>
+
+{% if students_with_grades %}
+<table border="1" cellpadding="6" style="width:100%; border-collapse: collapse;">
+    <tr style="background: #f2f2f2;">
+        <th>Student</th>
+        <th>Grade</th>
+        <th>Action</th>
+    </tr>
+    {% for entry in students_with_grades %}
+    <tr>
+        <td>{{ entry.student.name }}</td>
+        <td>
+            {% if entry.grade and entry.grade.score is not None %}
+                {{ entry.grade.score }}
+            {% else %}
+                Not graded yet
+            {% endif %}
+        </td>
+        <td>
+            <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="student_id" value="{{ entry.student.id }}">
+                <input type="number" name="score" min="0" max="100" 
+                       placeholder="Enter score" 
+                       {% if entry.grade and entry.grade.score is not None %}value="{{ entry.grade.score }}"{% endif %} 
+                       required>
+                <button type="submit" style="padding:5px 10px; background:#28a745; color:white; border:none; border-radius:5px;">
+                    {% if entry.grade and entry.grade.score is not None %}Update{% else %}Assign{% endif %}
+                </button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No students enrolled in this course yet.</p>
+{% endif %}
+
+<br>
+<a href="{% url 'lecturer_dashboard' %}" 
+   style="color: white; background: #6c757d; padding: 8px 14px; border-radius: 5px; text-decoration: none;">
+   ← Back to Dashboard
+</a>
+
+{% endblock %}

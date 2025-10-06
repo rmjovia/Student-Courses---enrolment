@@ -1,0 +1,70 @@
+{% extends "reports/base.html" %}
+{% block content %}
+<div style="padding: 20px;">
+    <h1>Welcome, {{ request.user.username }}</h1>
+    <h2>Your Dashboard</h2>
+
+    <!-- Create New Course -->
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'create_course' %}" 
+           style="color: white; background: #28a745; padding: 8px 14px; border-radius: 5px; text-decoration: none;">
+           + Create New Course
+        </a>
+    </div>
+
+    {% if courses %}
+    <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; text-align: left;">
+        <tr style="background: #007bff; color: white;">
+            <th>Course Name</th>
+            <th>Code</th>
+            <th>Credit Units</th>
+            <th>Edit Course</th>
+            <th>Students</th>
+            <th>Reviews</th>
+        </tr>
+        {% for course in courses %}
+        <tr>
+            <td>{{ course.name }}</td>
+            <td>{{ course.code }}</td>
+            <td>{{ course.credit_units }}</td>
+            <td>
+                <a href="{% url 'edit_course' course.id %}" 
+                   style="color: white; background: #ffc107; padding: 5px 10px; border-radius: 5px; text-decoration: none;">
+                   Edit
+                </a>
+            </td>
+            <td>
+                <a href="{% url 'course_students' course.id %}" 
+                   style="color: white; background: #17a2b8; padding: 5px 10px; border-radius: 5px; text-decoration: none;">
+                   View Students
+                </a>
+            </td>
+            <td>
+                <a href="{% url 'course_reviews' course.id %}" 
+                   style="color: white; background: #6c757d; padding: 5px 10px; border-radius: 5px; text-decoration: none;">
+                   View Reviews
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+        <p>No courses created yet. Click "Create New Course" to add one.</p>
+    {% endif %}
+
+    <hr style="margin-top: 20px;">
+    <!-- Logout Button -->
+    <div>
+        <button class="open-btn" onclick="openSidebar()"></button>
+
+        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn"
+                    style="padding:8px 14px; background:#dc3545; color:white; border:none; border-radius:5px; cursor:pointer;">
+                Logout
+            </button>
+        </form>
+    </div>
+
+</div>
+{% endblock %}

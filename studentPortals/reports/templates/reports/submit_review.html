@@ -1,0 +1,33 @@
+{% extends 'reports/base.html' %}
+
+{% block content %}
+
+<h2>Submit Review for {{ course.name }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <label>Rating:</label>
+    <select name="rating" required>
+        {% for i in rating_choices %}
+            <option value="{{ i }}" {% if review and review.rating == i %}selected{% endif %}>
+                {{ i }}
+            </option>
+        {% endfor %}
+    </select><br><br>
+    
+    <label>Comment:</label><br>
+    <textarea name="comment" rows="4" cols="50">{% if review %}{{ review.comment }}{% endif %}</textarea><br><br>
+    
+    <button type="submit" style="padding: 6px 12px; background:#007bff; color:white; border:none; border-radius:5px;">
+        {% if review %}Update Review{% else %}Submit Review{% endif %}
+    </button>
+</form>
+
+<br>
+<a href="{% url 'student_detail' student.id %}" 
+   style="color: white; background: #28a745; padding: 6px 12px; border-radius: 5px; text-decoration: none;">
+   Back to My Courses
+</a>
+
+{% endblock %}

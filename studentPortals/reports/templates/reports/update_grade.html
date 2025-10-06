@@ -1,0 +1,19 @@
+{% extends "reports/base.html" %}
+{% block content %}
+<h2>Edit Grade for {{ student.name }} - {{ course.name }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <label for="score">Grade:</label>
+    <input type="number" name="score" value="{{ grade.score }}" min="0" max="100" required>
+    <button type="submit" 
+        style="color: white; background: #28a745; padding: 6px 12px; border-radius: 5px; border: none;">
+        Save
+    </button>
+</form>
+
+<a href="{% url 'course_students' course.id %}" 
+   style="color: white; background: #007bff; padding: 8px 14px; border-radius: 5px; text-decoration: none; margin-top: 10px; display:inline-block;">
+   Back to Students
+</a>
+{% endblock %}

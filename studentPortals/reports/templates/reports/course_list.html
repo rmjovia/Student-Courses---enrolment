@@ -1,0 +1,53 @@
+{% extends 'reports/base.html' %}
+{% block content %}
+
+<h2>Available Courses</h2>
+
+<!-- Search -->
+<form method="get">
+    <input type="text" name="q" placeholder="Search courses..." value="{{ query }}">
+    <button type="submit">Search</button>
+</form>
+
+{% if available_courses %}
+<table border="1" cellpadding="6" style="border-collapse: collapse; width: 100%;">
+    <tr style="background: #f2f2f2;">
+        <th>Name</th>
+        <th>Code</th>
+        <th>Credit Units</th>
+        <th>Lecturer</th>
+        <th>Action</th>
+    </tr>
+    {% for course in available_courses %}
+    <tr>
+        <td>{{ course.name }}</td>
+        <td>{{ course.code }}</td>
+        <td>{{ course.credit_units }}</td>
+        <td>{{ course.lecturer }}</td>
+        <td>
+            <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="course_id" value="{{ course.id }}">
+                <button type="submit">
+                    {% if student in course.students.all %}
+                        Unenroll
+                    {% else %}
+                        Enroll
+                    {% endif %}
+                </button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No courses available to enroll.</p>
+{% endif %}
+
+<!-- Back button -->
+<a href="{% url 'student_detail' student.id %}" 
+   style="display:inline-block; margin-top:20px; padding:8px 14px; background:#6c757d; color:white; text-decoration:none; border-radius:5px;">
+   Back
+</a>
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "reports/base.html" %}
+{% block content %}
+<h2>Reviews for {{ course.name }}</h2>
+
+{% if reviews %}
+<table border="1" cellpadding="6" style="width:100%; border-collapse: collapse;">
+    <tr style="background: #f2f2f2;">
+        <th>Student</th>
+        <th>Rating</th>
+        <th>Comment</th>
+    </tr>
+    {% for review in reviews %}
+    <tr>
+        <td>{{ review.student.name }}</td>
+        <td>{{ review.rating }}/5</td>
+        <td>{{ review.comment }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No reviews submitted yet for this course.</p>
+{% endif %}
+
+<a href="{% url 'lecturer_dashboard' %}">Back to Courses</a>
+{% endblock %}

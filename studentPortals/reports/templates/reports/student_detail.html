@@ -1,0 +1,218 @@
+{% extends "reports/base.html" %}
+{% block content %}
+
+<style>
+    /* Sidebar Styling */
+    .sidebar {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: #343a40;
+        overflow-x: hidden;
+        transition: 0.4s;
+        padding-top: 60px;
+        z-index: 1000;
+    }
+    .sidebar a {
+        padding: 12px 24px;
+        text-decoration: none;
+        font-size: 16px;
+        color: white;
+        display: block;
+        transition: 0.3s;
+    }
+    .sidebar a:hover {
+        background-color: #495057;
+    }
+
+    .open-btn {
+        font-size: 20px;
+        cursor: pointer;
+        background-color: #343a40;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        margin: 10px 0;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 25px;
+        color: white;
+        text-decoration: none;
+    }
+
+    .main-content {
+        transition: margin-left 0.4s;
+        padding: 20px;
+        margin-left: 0;
+    }
+
+    .logout-btn {
+        padding: 8px 14px;
+        background: #dc3545;
+        color: white;
+        border-radius: 5px;
+        text-decoration: none;
+        float: right;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 8px;
+        border: 1px solid #ddd;
+    }
+    th {
+        background: #f2f2f2;
+    }
+</style>
+
+<!-- Sidebar -->
+<div id="sidebar" class="sidebar">
+    <a href="javascript:void(0)" class="close-btn" onclick="closeSidebar()">&times;</a>
+    <!--<a href="#dashboard">Dashboard</a>-->
+    <a href="#dashboard">Enrolled Courses</a>
+    <a href="#my-grades">My Grades</a>
+    <a href="#available-courses">View Available Courses</a>
+    
+    <div>
+        <button class="open-btn" onclick="openSidebar()"></button>
+
+        <form method="post" action="{% url 'logout' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn"
+                    style="padding:8px 14px; background:#dc3545; color:white; border:none; border-radius:5px; cursor:pointer;">
+                Logout
+            </button>
+        </form>
+    </div>
+
+</div>
+
+<!-- Top Bar -->
+<div>
+    <button class="open-btn" onclick="openSidebar()">☰ Menu</button>
+
+    <form method="post" action="{% url 'logout' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="logout-btn"
+                style="padding:8px 14px; background:#dc3545; color:white; border:none; border-radius:5px; cursor:pointer;">
+            Logout
+        </button>
+    </form>
+</div>
+
+<div class="main-content" id="main">
+    <h1>Welcome, {{ student.name }}!</h1>
+    <hr>
+
+    <!-- Dashboard -->
+    <div id="dashboard">
+        <h2>Enrolled Courses</h2>
+        {% if enrolled_courses %}
+        <table>
+            <tr>
+                <th>Course Name</th>
+                <th>Code</th>
+                <th>Lecturer</th>
+                <th>Credit Units</th>
+                <th>Action</th>
+            </tr>
+            {% for course in enrolled_courses %}
+            <tr>
+                <td>{{ course.name }}</td>
+                <td>{{ course.code }}</td>
+                <td>{{ course.lecturer }}</td>
+                <td>{{ course.credit_units }}</td>
+                <td><a href="{% url 'add_review' course.id %}" class="btn btn-warning"> Review</a></td>
+                <td>
+                    <form method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="course_id" value="{{ course.id }}">
+                        <button type="submit" 
+                            style="background:#dc3545; color:white; border:none; padding:5px 8px; border-radius:5px;">
+                            Unenroll
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>No enrolled courses yet.</p>
+        {% endif %}
+
+        <h2 id="my-grades">My Grades</h2>
+        {% if grades %}
+        <table>
+            <tr>
+                <th>Course</th>
+                <th>Score</th>
+            </tr>
+            {% for grade in grades %}
+            <tr>
+                <td>{{ grade.course.name }}</td>
+                <td>{{ grade.score }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>No grades available yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Available Courses -->
+    <div id="available-courses" class="section">
+        <h2>Available Courses</h2>
+        {% if available_courses %}
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Lecturer</th>
+                <th>Action</th>
+            </tr>
+            {% for course in available_courses %}
+            <tr>
+                <td>{{ course.name }}</td>
+                <td>{{ course.code }}</td>
+                <td>{{ course.lecturer }}</td>
+                <td>
+                    <form method="post" style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="course_id" value="{{ course.id }}">
+                        <button type="submit"
+                            style="background:#28a745; color:white; border:none; padding:5px 8px; border-radius:5px;">
+                            Enroll
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>No courses available to enroll.</p>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function openSidebar() {
+        document.getElementById("sidebar").style.width = "250px";
+        document.getElementById("main").style.marginLeft = "250px";
+    }
+    function closeSidebar() {
+        document.getElementById("sidebar").style.width = "0";
+        document.getElementById("main").style.marginLeft = "0";
+    }
+</script>
+
+{% endblock %}

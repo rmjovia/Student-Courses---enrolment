@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Django Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef1f5;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #007bff;
+            color: white;
+            padding: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Student Courses & Enrollment</h1>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+</body>
+</html>
